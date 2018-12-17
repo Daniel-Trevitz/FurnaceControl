@@ -1,0 +1,21 @@
+<html>
+<head>
+<script type="text/javascript" src="/jquery-3.3.1.min.js"></script>
+
+<script type="text/javascript">
+        // Get the actual values
+        $.ajax({
+            type:'get',
+            url:'cgi-bin/printtemp',
+            success: function(data) 
+            {
+                // Set the sliders based on the temp
+                document.getElementById("curTemp").innerHTML = data;
+            }
+        });
+</script>
+</head>
+<body>
+<div id="curTemp"></div>
+</body>
+</html>

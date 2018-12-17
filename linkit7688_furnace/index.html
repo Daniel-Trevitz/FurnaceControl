@@ -1,0 +1,161 @@
+<html>
+<head>
+<title>Furnace Control</title>
+
+<script type="text/javascript" src="/jquery-3.3.1.min.js"></script>
+
+<script type="text/javascript">
+
+    var offTemp = 1;
+    var onTemp = 1;
+    var state = 0;
+    var temp = 0;
+
+    function init()
+    {
+        // Get the actual values
+        $.ajax({
+            type:'get',
+            url:'cgi-bin/getState.sh',
+            success: function(data) 
+            {
+                eval(data); // evil but simple
+
+                // Set the sliders based on the temp
+                document.getElementById("inputOffTemp").value = offTemp;
+                document.getElementById("inputOnTemp").value = onTemp;
+
+                updateTempValues(); 
+            }
+        });
+    }
+
+    function getStatus()
+    {
+        $.ajax({
+            type:'get',
+            url:'cgi-bin/getState.sh',
+            success: function(data) { eval(data); updateTempValues(); }
+        });
+    }
+
+    function on()
+    {
+        $.ajax({                                                      
+            type:'get',            
+            url:'cgi-bin/e_on.sh',
+            success: function(data) { eval(data); updateTempValues(); }
+        });        
+    }
+
+    function off()                                                      
+    {                                                                  
+        $.ajax({                                                       
+            type:'get',                                                
+            url:'cgi-bin/e_off.sh',                                     
+            success: function(data) { eval(data); updateTempValues(); }
+        });                                                     
+    }                                                           
+
+    function normal()
+    {                                                                                                                                                                         
+        $.ajax({                                                                                                                                                              
+            type:'get',                                                                                                                                                       
+            url:'cgi-bin/e_norm.sh',                                                                                                                                        
+            success: function(data) { eval(data); updateTempValues(); }                                 
+        });                                                                                             
+    }
+
+    function updateTempValues()
+    {
+        document.getElementById("curTemp").innerHTML = temp;
+
+        offTemp = document.getElementById("inputOffTemp").value;
+        document.getElementById("offTemp").innerHTML = offTemp;
+
+        onTemp = document.getElementById("inputOnTemp").value;
+        document.getElementById("onTemp").innerHTML = onTemp;
+
+        if(state == 1)
+        {
+            document.getElementById("curState").innerHTML = "Furnace <b>OFF</b>";
+        }
+        else
+        {
+            document.getElementById("curState").innerHTML = "Furnace <b>ON</b>";
+        }
+
+	if(e_state == 1)
+	{
+		 document.getElementById("e_norm").disabled = 0;
+                 document.getElementById("e_off").disabled = 1;
+                 document.getElementById("e_on").disabled = 1;
+	}
+	else
+	{
+	         document.getElementById("e_norm").disabled = 1;
+                 document.getElementById("e_off").disabled = 0;
+                 document.getElementById("e_on").disabled = 0;
+	}
+
+	setTimeout(getStatus, 1500);
+    }
+
+    function apply()
+    {
+        if(onTemp < offTemp)
+        {
+            $.ajax({
+                type:'get',
+                url:'cgi-bin/setTemps.sh?' + offTemp + ',' + onTemp,
+                success: function(data) { alert("Temperature Set!"); }
+            });
+        }
+        else
+        {
+            alert("On temp must be less than off temp!");
+        }
+    }
+
+    
+</script>
+
+<style>
+    input[type="range"] { 
+        margin: auto;
+        -webkit-appearance: none;
+        position: relative;
+        overflow: hidden;
+        height: 40px;
+        width: 300px;
+        cursor: pointer;
+        border-radius: 0; /* iOS */
+    }
+
+    ::-webkit-slider-runnable-track {
+        background: red;
+    }
+
+    ::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 20px; /* 1 */
+        height: 40px;
+        background: #fff;
+        box-shadow: -100vw 0 0 100vw blue;
+        border: 2px solid #999; /* 1 */
+    }
+</style>
+</head>
+<body onload="init()">
+    <table>
+        <tr><td>Turn OFF Temp</td><td><input type="range" id="inputOffTemp" value="70" min=50 max=80 onchange="updateTempValues()"></td><td><div id="offTemp"></div></td></tr>
+        <tr><td>Turn ON Temp</td><td><input type="range" id="inputOnTemp" value="70" min=50 max=80 onchange="updateTempValues()"></td><td><div id="onTemp"></div></td></tr>
+        <tr><td>Current Temperature:</td><td><div id="curTemp"></div></td><td></td></tr>
+        <tr><td><div id="curState"></div></td></td><td></td></tr>
+        <tr><td><button id="apply" onclick="apply()">Change Temp</button></td></td><td></td></tr>
+	<tr><td><button id="e_on" onclick="on()">Emergency On</button></td></td><td></td></tr>
+	<tr><td><button id="e_off" onclick="off()">Emergency Off</button></td></td><td></td></tr>
+        <tr><td><button id="e_norm" onclick="normal()">Resume Operation</button></td></td><td></td></tr>
+    </table>
+</body>
+</html>
