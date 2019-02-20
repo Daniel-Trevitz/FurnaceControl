@@ -1,0 +1,12 @@
+To enable SSL first:
+    opkg update
+    opkg install libustream-openssl
+
+
+To create the keys run:
+    opkg install openssl-util
+    cd /root/
+    openssl req -x509 -nodes -days 730 -newkey rsa:2048 -keyout furnace.key -out furnace.crt -config furnacecert.config
+
+From Linux you can add the key:
+    certutil -d sql:$HOME/.pki/nssdb -A -t "P,," -n furnace.crt -i furnace.crt

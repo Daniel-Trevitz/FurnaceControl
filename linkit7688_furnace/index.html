@@ -126,8 +126,8 @@
         -webkit-appearance: none;
         position: relative;
         overflow: hidden;
-        height: 40px;
-        width: 300px;
+        height: 80px;
+        width: 100%;
         cursor: pointer;
         border-radius: 0; /* iOS */
     }
@@ -138,18 +138,22 @@
 
     ::-webkit-slider-thumb {
         -webkit-appearance: none;
-        width: 20px; /* 1 */
-        height: 40px;
+        width: 40px; /* 1 */
+        height: 80px;
         background: #fff;
         box-shadow: -100vw 0 0 100vw blue;
         border: 2px solid #999; /* 1 */
     }
+
+    button { width: 100%; height: 80px; font-size: 100%; }
+    td { height: 80px; font-size: 100%; }
+    td:first-child { width: 200px; }
 </style>
 </head>
 <body onload="init()">
-    <table>
-        <tr><td>Turn OFF Temp</td><td><input type="range" id="inputOffTemp" value="70" min=50 max=80 onchange="updateTempValues()"></td><td><div id="offTemp"></div></td></tr>
-        <tr><td>Turn ON Temp</td><td><input type="range" id="inputOnTemp" value="70" min=50 max=80 onchange="updateTempValues()"></td><td><div id="onTemp"></div></td></tr>
+    <table width=100%>
+        <tr><td>Turn OFF Temp</td><td><input type="range" id="inputOffTemp" value="70" min=50 max=80 oninput="updateTempValues()" onchange="updateTempValues()"></td><td><div id="offTemp"></div></td></tr>
+        <tr><td>Turn ON Temp</td><td><input type="range" id="inputOnTemp" value="70" min=50 max=80 oninput="updateTempValues()" onchange="updateTempValues()"></td><td><div id="onTemp"></div></td></tr>
         <tr><td>Current Temperature:</td><td><div id="curTemp"></div></td><td></td></tr>
         <tr><td><div id="curState"></div></td></td><td></td></tr>
         <tr><td><button id="apply" onclick="apply()">Change Temp</button></td></td><td></td></tr>
@@ -159,3 +163,4 @@
     </table>
 </body>
 </html>
+
