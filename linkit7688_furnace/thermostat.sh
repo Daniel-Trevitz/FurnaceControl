@@ -18,7 +18,7 @@ echo "Starting" > state.txt
 
 echo $io > /sys/class/gpio/export
 
-echo out > /sys/class/gpio/gpio$io/direction 
+echo out > /sys/class/gpio/gpio$io/direction
 
 echo 1 > /sys/class/gpio/gpio$io/value
 
@@ -31,8 +31,21 @@ do
   degF=`wget 192.168.1.92:8080/cgi-bin/printtemp -O - 2> error.log`
   degF=`echo $degF | tr -d $'\r'`
 
-  lowT=`cat temp_low.txt | tr -d $'\r'`
-  higT=`cat temp_high.txt | tr -d $'\r'`
+  # Since the date is in UTC, 6:30 std time is 11:30 UTC.
+  # I.E. anything after 7:00 starts at 0
+
+  now=`date +%H`
+  if [ $now -ge 1 -a $now -le 10 ]
+  then
+    isNight="night_"
+    echo "1" > isNight.txt
+  else
+    isNight=""
+    echo "0" > isNight.txt
+  fi
+
+  lowT=`cat ${isNight}temp_low.txt | tr -d $'\r'`
+  higT=`cat ${isNight}temp_high.txt | tr -d $'\r'`
   echo $degF > temp.txt
 
   s=`echo "$degF < 5" | bc -l`
@@ -75,6 +88,6 @@ do
     echo 1 > /sys/class/gpio/gpio$io/value
   fi
 
-  echo $degF $lowT $higT $state > state.txt
+  echo $degF $lowT $higT $state $isNight > state.txt
 done
 

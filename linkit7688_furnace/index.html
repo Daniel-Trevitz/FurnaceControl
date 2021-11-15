@@ -6,6 +6,9 @@
 
 <script type="text/javascript">
 
+    var nightOffTemp = 1;
+    var nightOnTemp = 1;
+    var isNight = 0;
     var offTemp = 1;
     var onTemp = 1;
     var state = 0;
@@ -17,15 +20,17 @@
         $.ajax({
             type:'get',
             url:'cgi-bin/getState.sh',
-            success: function(data) 
+            success: function(data)
             {
                 eval(data); // evil but simple
 
                 // Set the sliders based on the temp
                 document.getElementById("inputOffTemp").value = offTemp;
                 document.getElementById("inputOnTemp").value = onTemp;
+                document.getElementById("inputNightOffTemp").value = nightOffTemp;
+                document.getElementById("inputNightOnTemp").value = nightOnTemp;
 
-                updateTempValues(); 
+                updateTempValues();
             }
         });
     }
@@ -41,29 +46,29 @@
 
     function on()
     {
-        $.ajax({                                                      
-            type:'get',            
+        $.ajax({
+            type:'get',
             url:'cgi-bin/e_on.sh',
             success: function(data) { eval(data); updateTempValues(); }
-        });        
+        });
     }
 
-    function off()                                                      
-    {                                                                  
-        $.ajax({                                                       
-            type:'get',                                                
-            url:'cgi-bin/e_off.sh',                                     
+    function off()
+    {
+        $.ajax({
+            type:'get',
+            url:'cgi-bin/e_off.sh',
             success: function(data) { eval(data); updateTempValues(); }
-        });                                                     
-    }                                                           
+        });
+    }
 
     function normal()
-    {                                                                                                                                                                         
-        $.ajax({                                                                                                                                                              
-            type:'get',                                                                                                                                                       
-            url:'cgi-bin/e_norm.sh',                                                                                                                                        
-            success: function(data) { eval(data); updateTempValues(); }                                 
-        });                                                                                             
+    {
+        $.ajax({
+            type:'get',
+            url:'cgi-bin/e_norm.sh',
+            success: function(data) { eval(data); updateTempValues(); }
+        });
     }
 
     function updateTempValues()
@@ -76,6 +81,12 @@
         onTemp = document.getElementById("inputOnTemp").value;
         document.getElementById("onTemp").innerHTML = onTemp;
 
+        nightOffTemp = document.getElementById("inputNightOffTemp").value;
+        document.getElementById("nightOffTemp").innerHTML = nightOffTemp;
+
+        onTemp = document.getElementById("inputNightOnTemp").value;
+        document.getElementById("nightOnTemp").innerHTML = nightOnTemp;
+
         if(state == 1)
         {
             document.getElementById("curState").innerHTML = "Furnace <b>OFF</b>";
@@ -85,20 +96,20 @@
             document.getElementById("curState").innerHTML = "Furnace <b>ON</b>";
         }
 
-	if(e_state == 1)
-	{
-		 document.getElementById("e_norm").disabled = 0;
+        if(e_state == 1)
+        {
+                 document.getElementById("e_norm").disabled = 0;
                  document.getElementById("e_off").disabled = 1;
                  document.getElementById("e_on").disabled = 1;
-	}
-	else
-	{
-	         document.getElementById("e_norm").disabled = 1;
+        }
+        else
+        {
+                 document.getElementById("e_norm").disabled = 1;
                  document.getElementById("e_off").disabled = 0;
                  document.getElementById("e_on").disabled = 0;
-	}
+        }
 
-	setTimeout(getStatus, 1500);
+        setTimeout(getStatus, 1500);
     }
 
     function apply()
@@ -107,7 +118,7 @@
         {
             $.ajax({
                 type:'get',
-                url:'cgi-bin/setTemps.sh?' + offTemp + ',' + onTemp,
+                url:'cgi-bin/setTemps.sh?' + offTemp + ',' + onTemp + ',' + nightOffTemp + ',' + nightOnTemp,
                 success: function(data) { alert("Temperature Set!"); }
             });
         }
@@ -117,11 +128,11 @@
         }
     }
 
-    
+
 </script>
 
 <style>
-    input[type="range"] { 
+    input[type="range"] {
         margin: auto;
         -webkit-appearance: none;
         position: relative;
@@ -154,13 +165,14 @@
     <table width=100%>
         <tr><td>Turn OFF Temp</td><td><input type="range" id="inputOffTemp" value="70" min=50 max=80 oninput="updateTempValues()" onchange="updateTempValues()"></td><td><div id="offTemp"></div></td></tr>
         <tr><td>Turn ON Temp</td><td><input type="range" id="inputOnTemp" value="70" min=50 max=80 oninput="updateTempValues()" onchange="updateTempValues()"></td><td><div id="onTemp"></div></td></tr>
+        <tr><td>Night OFF Temp</td><td><input type="range" id="inputNightOffTemp" value="70" min=50 max=80 oninput="updateTempValues()" onchange="updateTempValues()"></td><td><div id="nightOffTemp"></div></td></tr>
+        <tr><td>Night ON Temp</td><td><input type="range" id="inputNightOnTemp" value="70" min=50 max=80 oninput="updateTempValues()" onchange="updateTempValues()"></td><td><div id="nightOnTemp"></div></td></tr>
         <tr><td>Current Temperature:</td><td><div id="curTemp"></div></td><td></td></tr>
         <tr><td><div id="curState"></div></td></td><td></td></tr>
         <tr><td><button id="apply" onclick="apply()">Change Temp</button></td></td><td></td></tr>
-	<tr><td><button id="e_on" onclick="on()">Emergency On</button></td></td><td></td></tr>
-	<tr><td><button id="e_off" onclick="off()">Emergency Off</button></td></td><td></td></tr>
+        <tr><td><button id="e_on" onclick="on()">Emergency On</button></td></td><td></td></tr>
+        <tr><td><button id="e_off" onclick="off()">Emergency Off</button></td></td><td></td></tr>
         <tr><td><button id="e_norm" onclick="normal()">Resume Operation</button></td></td><td></td></tr>
     </table>
 </body>
 </html>
-
