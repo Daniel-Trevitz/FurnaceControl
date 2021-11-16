@@ -1,7 +1,13 @@
 #!/bin/sh
-io=0
+io=1
 
 cd /root/
+
+echo $io > /sys/class/gpio/export
+
+echo out > /sys/class/gpio/gpio$io/direction
+
+echo 1 > /sys/class/gpio/gpio$io/value
 
 echo "Waiting for IP" > state.txt
 
@@ -16,13 +22,8 @@ done
 
 echo "Starting" > state.txt
 
-echo $io > /sys/class/gpio/export
-
-echo out > /sys/class/gpio/gpio$io/direction
-
-echo 1 > /sys/class/gpio/gpio$io/value
-
 state=0
+
 while [ true ]
 do
   sleep 1

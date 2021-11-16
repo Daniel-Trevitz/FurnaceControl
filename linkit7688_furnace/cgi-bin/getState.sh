@@ -1,4 +1,6 @@
 #!/bin/sh
+io=1
+
 echo "Content-type: text/plain"
 echo ""
 
