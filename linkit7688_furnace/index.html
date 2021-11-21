@@ -96,6 +96,15 @@
             document.getElementById("curState").innerHTML = "Furnace <b>ON</b>";
         }
 
+        if(isNight == 1)
+        {
+            document.getElementById("nightState").innerHTML = "Night Mode";
+        }
+        else
+        {
+            document.getElementById("nightState").innerHTML = "Day Mode";
+        }
+
         if(e_state == 1)
         {
                  document.getElementById("e_norm").disabled = 0;
@@ -169,6 +178,7 @@
         <tr><td>Night ON Temp</td><td><input type="range" id="inputNightOnTemp" value="70" min=50 max=80 oninput="updateTempValues()" onchange="updateTempValues()"></td><td><div id="nightOnTemp"></div></td></tr>
         <tr><td>Current Temperature:</td><td><div id="curTemp"></div></td><td></td></tr>
         <tr><td><div id="curState"></div></td></td><td></td></tr>
+        <tr><td><div id="nightState"></div></td></td><td></td></tr>
         <tr><td><button id="apply" onclick="apply()">Change Temp</button></td></td><td></td></tr>
         <tr><td><button id="e_on" onclick="on()">Emergency On</button></td></td><td></td></tr>
         <tr><td><button id="e_off" onclick="off()">Emergency Off</button></td></td><td></td></tr>
