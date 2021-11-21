@@ -4,7 +4,7 @@ io=1
 echo "Content-type: text/plain"
 echo ""
 
-echo "state=`cat /sys/class/gpio/gpio0/value`"
+echo "state=`cat /sys/class/gpio/gpio$io/value`"
 echo "onTemp=`cat temp_low.txt`"
 echo "offTemp=`cat temp_high.txt`"
 echo "nightOnTemp=`cat night_temp_low.txt`"
