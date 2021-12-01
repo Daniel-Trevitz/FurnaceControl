@@ -13,7 +13,7 @@ echo "Waiting for IP" > state.txt
 
 while [ true ]
 do
-  ping 192.168.1.92 -c1
+  ping 192.168.1.92 -c1 -q
   if [ $? -eq 0 ]
   then
     break
@@ -22,6 +22,8 @@ done
 
 echo "Starting" > state.txt
 
+lastpid=-1
+oldstate=-1
 state=0
 
 while [ true ]
@@ -82,13 +84,29 @@ do
     state=0 # Force off
   fi
 
-  if [ $state -eq 1 ]
+  if [ $state -ne $oldstate ]
   then
-    echo 0 > /sys/class/gpio/gpio$io/value
-  else
-    echo 1 > /sys/class/gpio/gpio$io/value
+    oldstate=$state
+
+    if [ $state -eq 1 ]
+    then
+        echo 0 > /sys/class/gpio/gpio$io/value
+        delay=45
+    else
+        echo 1 > /sys/class/gpio/gpio$io/value
+        delay=30
+    fi
+
+    if [ -e /proc/$lastpid ]
+    then
+       kill -9 $lastpid
+    fi
+
+    ( sleep $delay; curl -X POST -d @sonoff.$state.json http://192.168.1.175:8081/zeroconf/switch -m 5 > curl.log 2> curl2.log ) &
+    lastpid=$!
+
+    echo $degF $lowT $higT $state $isNight > state.txt
   fi
 
-  echo $degF $lowT $higT $state $isNight > state.txt
 done
 

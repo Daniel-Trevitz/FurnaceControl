@@ -1,5 +1,5 @@
 #!/bin/sh
-io=0
+io=1
 
 echo "Content-type: text/plain"
 echo ""
